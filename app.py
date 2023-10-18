@@ -9,6 +9,8 @@ europe_growth = pd.read_csv('./data/europe_growth.csv',index_col=0)
 growth = pd.read_csv('./data/growth.csv', index_col=1).drop(columns = ['Unnamed: 0']).stack()\
     .reset_index().rename(columns = {'Real GDP growth (Annual percent change)' : 'Country'})
 
+animation = pd.read_csv('./data/animation.csv')
+
 #Ajinkya
 mendeley = pd.read_excel("data/mendeley_data.xlsx")
 mendeley.drop(columns= ["Unnamed: 9", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12", "Unnamed: 13"], inplace=True)
@@ -59,6 +61,13 @@ fig4.update_layout(
 )
 fig4.update_xaxes(showticklabels=False)
 
+fig5 = px.choropleth(animation, locations="iso_code",
+                    color='new_cases_smoothed_per_million', 
+                    hover_name="location",
+                    animation_frame="date",
+                    range_color=[0,10000],
+                    color_continuous_scale=px.colors.sequential.Greens)
+
 app = Dash(__name__, suppress_callback_exceptions=True)
 
 app.layout = html.Div([
@@ -75,6 +84,7 @@ index_page = html.Div([
 page_1_layout = html.Div([
     html.H1('Page 1'),
     dcc.Graph(figure=fig1),
+    dcc.Graph(figure=fig5),
     dcc.Dropdown(growth.Country.unique(), 'France', id='dropdown-selection'),
     dcc.Graph(id='graph-content'),
     html.Div(id='page-1-content'),
