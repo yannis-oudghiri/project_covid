@@ -67,6 +67,7 @@ fig5 = px.choropleth(animation, locations="iso_code",
                     animation_frame="date",
                     title= 'Evolution of number of new cases per million',
                     range_color=[0,10000],
+                    height=800,
                     color_continuous_scale=px.colors.sequential.Greens)
 
 app = Dash(__name__, suppress_callback_exceptions=True)
@@ -107,6 +108,7 @@ page_2_layout = html.Div([
     ]),
     dcc.Graph(figure=fig2),
     dcc.Graph(figure=fig3),
+    html.P('We can observe that the economic growth has been impacted by Covid. But, we can see only a local impact around 2020. There is no change in the long term.'),
     dcc.Dropdown(growth.Country.unique(), 'France', id='dropdown-selection'),
     dcc.Graph(id='graph-content'),
     dcc.Graph(figure=fig1),

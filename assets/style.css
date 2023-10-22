@@ -24,4 +24,12 @@ ul {
     margin: 0;
     list-style: none;
     font-size: 1.5em;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+p {
+    background-color : #F4F4F8;
+    color: #2AB7CA;
+    font-size: 2em;
 }
