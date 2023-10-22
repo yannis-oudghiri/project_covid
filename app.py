@@ -40,7 +40,7 @@ df2_grouped = mendeley_grouped.replace({'AS':'Asia', 'EU':'Europe', 'AF':'Africa
 
 europe_growth_stack = europe_growth.stack().reset_index().rename(columns = {'level_0' : 'date','level_1' : 'Country', 0 : 'growth'})
 
-fig1 = px.line(europe_growth_stack, x='date', y='growth', color='Country', title='GROWTH')
+fig1 = px.line(europe_growth_stack, x='date', y='growth', color='Country', title='Evolution of economic growth')
 
 fig2 = px.scatter(mendeley_grouped, x="human_development_index", y="gdp_per_capita", size="population", hover_name="location", color='location', template='simple_white', size_max=70)
 fig2.update_layout(
@@ -65,6 +65,7 @@ fig5 = px.choropleth(animation, locations="iso_code",
                     color='new_cases_smoothed_per_million', 
                     hover_name="location",
                     animation_frame="date",
+                    title= 'Evolution of number of new cases per million',
                     range_color=[0,10000],
                     color_continuous_scale=px.colors.sequential.Greens)
 
@@ -76,22 +77,20 @@ app.layout = html.Div([
 ])
 
 index_page = html.Div([
-    dcc.Link('Graphic 1', href='/page-1'),
-    html.Br(),
-    dcc.Link('Graphic 2', href='/page-2'),
+    html.H1('The impact of the Covid-19 pandemic on the global economy'),
+    html.Ul([dcc.Link('Evolution of Covid cases', href='/page-1'),
+    dcc.Link('Covid and economy', href='/page-2'),
+    ]),
 ])
 
 page_1_layout = html.Div([
-    html.H1('Page 1'),
-    dcc.Graph(figure=fig1),
-    dcc.Graph(figure=fig5),
-    dcc.Dropdown(growth.Country.unique(), 'France', id='dropdown-selection'),
-    dcc.Graph(id='graph-content'),
-    html.Div(id='page-1-content'),
-    html.Br(),
-    dcc.Link('Go to Page 2', href='/page-2'),
-    html.Br(),
+    html.H1('Evolution of Covid cases'),
+    html.Ul([dcc.Link('Covid and economy', href='/page-2'),
     dcc.Link('Go back to home', href='/'),
+    ]),
+    dcc.Graph(figure=fig5),
+    dcc.Graph(figure=fig4),
+    html.Div(id='page-1-content')
 ])
 
 
@@ -102,15 +101,16 @@ def page_1_dropdown(value):
 
 
 page_2_layout = html.Div([
-    html.H1('Page 2'),
+    html.H1('Covid and economy'),
+    html.Ul([dcc.Link('Evolution of Covid cases', href='/page-1'),
+    dcc.Link('Go back to home', href='/'),
+    ]),
     dcc.Graph(figure=fig2),
     dcc.Graph(figure=fig3),
-    dcc.Graph(figure=fig4),
-    html.Div(id='page-2-content'),
-    html.Br(),
-    dcc.Link('Go to Page 1', href='/page-1'),
-    html.Br(),
-    dcc.Link('Go back to home', href='/')
+    dcc.Dropdown(growth.Country.unique(), 'France', id='dropdown-selection'),
+    dcc.Graph(id='graph-content'),
+    dcc.Graph(figure=fig1),
+    html.Div(id='page-2-content')
 ])
 
 
@@ -138,7 +138,7 @@ def display_page(pathname):
 def update_graph(value):
     dff = growth[growth.Country==value].rename(columns={'level_1' : 'date',0 : 'growth'})
     dff['growth'] = dff['growth'].replace(',','.',regex=True).astype(float)
-    return px.line(dff, x='date', y='growth')
+    return px.line(dff, x='date', y='growth', title='Evolution of economic growth')
 
 
 if __name__ == '__main__':
