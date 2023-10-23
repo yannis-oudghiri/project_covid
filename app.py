@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import pycountry_convert as pc
 
+
 europe_growth = pd.read_csv('./data/europe_growth.csv',index_col=0)
 
 growth = pd.read_csv('./data/growth.csv', index_col=1).drop(columns = ['Unnamed: 0']).stack()\
@@ -40,6 +41,13 @@ df2_grouped = mendeley_grouped.replace({'AS':'Asia', 'EU':'Europe', 'AF':'Africa
 
 europe_growth_stack = europe_growth.stack().reset_index().rename(columns = {'level_0' : 'date','level_1' : 'Country', 0 : 'growth'})
 
+data_bank = pd.read_csv('./data/world_bank_data.csv',sep=',', parse_dates=['date'])
+
+def plot_data(data, indicator, title): 
+    return px.line(data, x='date', y=indicator, color='country', title=title)
+
+
+# Graphs
 fig1 = px.line(europe_growth_stack, x='date', y='growth', color='Country', title='Evolution of economic growth')
 
 fig2 = px.scatter(mendeley_grouped, x="human_development_index", y="gdp_per_capita", size="population", hover_name="location", color='location', template='simple_white', size_max=70)
@@ -81,7 +89,7 @@ index_page = html.Div([
     html.H1('The impact of the Covid-19 pandemic on the global economy'),
     html.Ul([dcc.Link('Evolution of Covid cases', href='/page-1'),
     dcc.Link('Covid and economy', href='/page-2'),
-    ]),
+    ])
 ])
 
 page_1_layout = html.Div([
@@ -91,6 +99,7 @@ page_1_layout = html.Div([
     ]),
     dcc.Graph(figure=fig5),
     dcc.Graph(figure=fig4),
+    dcc.Graph(figure=plot_data(data_bank,'Mortality',"Mortality over Time")),
     html.Div(id='page-1-content')
 ])
 
@@ -112,6 +121,8 @@ page_2_layout = html.Div([
     dcc.Dropdown(growth.Country.unique(), 'France', id='dropdown-selection'),
     dcc.Graph(id='graph-content'),
     dcc.Graph(figure=fig1),
+    dcc.Graph(figure = plot_data(data_bank,'Unemployment', "Unemployment Over Time")),
+    dcc.Graph(figure = plot_data(data_bank, 'TourismExpenditure', "Tourism Expenditure Over Time")),
     html.Div(id='page-2-content')
 ])
 
